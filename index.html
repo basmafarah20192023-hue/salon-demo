@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نموذج صفحة حجز لصالون</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@500;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f8eff1;--card:#fff;--ink:#2a1a2e;--muted:#6f5a72;--plum:#6b2d5c;--on-plum:#fff;--gold:#c9a24b;--line:#e8d6dc;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1d1220;--card:#2a1b2e;--ink:#f6e9ee;--muted:#c3aac4;--plum:#d98ec6;--on-plum:#2a1a2e;--gold:#e0bc63;--line:#44304a}}
+:root[data-theme="dark"]{--bg:#1d1220;--card:#2a1b2e;--ink:#f6e9ee;--muted:#c3aac4;--plum:#d98ec6;--on-plum:#2a1a2e;--gold:#e0bc63;--line:#44304a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Tajawal,system-ui,sans-serif;line-height:1.7}
+main{max-width:520px;margin:0 auto;padding:28px 20px 40px}
+h1{font-family:'Reem Kufi',serif;font-size:2.6rem;line-height:1.15;margin:0 0 8px;color:var(--plum)}
+.sub{color:var(--muted);margin:0 0 24px;font-size:1.05rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;margin-bottom:20px}
+h2{font-family:'Reem Kufi',serif;font-size:1.35rem;margin:0 0 12px}
+ul{list-style:none;margin:0;padding:0}
+li{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line)}
+li:last-child{border-bottom:0}
+li b{color:var(--gold);white-space:nowrap}
+label{display:block;font-weight:700;margin:14px 0 6px}
+input,select{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:13px 14px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+button{width:100%;margin-top:20px;font:700 1.1rem Tajawal,sans-serif;background:var(--plum);color:var(--on-plum);border:0;border-radius:14px;padding:15px;cursor:pointer}
+.err{color:#c0392b;font-size:.9rem;min-height:1.2em;margin:6px 0 0}
+.info{color:var(--muted);font-size:.95rem;margin:0}
+</style>
+</head>
+<body>
+<main>
+  <p style="background:var(--card);border:1px solid var(--gold);border-radius:12px;padding:10px 14px;margin:0 0 20px;font-size:.95rem">هادا نموذج. نصاوبو ليك صفحة بسميّة الصالون ديالك والأثمنة الحقيقية.</p>
+  <h1 id="name"></h1>
+  <p class="sub">قصّ، صباغة، براشينغ، ومكياج. حجزي موعدك فدقيقة.</p>
+
+  <section class="card">
+    <h2>الخدمات والأثمنة</h2>
+    <ul id="services"></ul>
+  </section>
+
+  <section class="card">
+    <h2>احجزي دابا</h2>
+    <label for="n">السمية</label>
+    <input id="n" autocomplete="name" placeholder="مثلا: فاطمة">
+    <label for="p">رقم الهاتف</label>
+    <input id="p" type="tel" inputmode="tel" autocomplete="tel" placeholder="06 12 34 56 78" dir="ltr" style="text-align:right">
+    <label for="s">الخدمة</label>
+    <select id="s"></select>
+    <label for="d">النهار اللي بغيتي</label>
+    <input id="d" type="date">
+    <p class="err" id="err" role="alert"></p>
+    <button id="go" type="button">صيفط الحجز فواتساب</button>
+  </section>
+
+  <p class="info">فتحين: كل نهار من 10:00 حتى 20:00، ماعدا الأحد.<br>العنوان: شارع محمد الخامس، رقم 12.</p>
+</main>
+<script>
+// بدّل هاد 3 حوايج غير للصالون ديالك
+var SALON = "صالون الجمال";
+var WA = "212646581862"; // رقم واتساب ديال الصالون بلا + وبلا صفر
+var SERVICES = [["قص","60 درهم"],["صباغة","250 درهم"],["براشينغ","80 درهم"],["كيراتين","600 درهم"],["مكياج","300 درهم"]];
+
+document.getElementById("name").textContent = SALON;
+var list = document.getElementById("services"), sel = document.getElementById("s");
+SERVICES.forEach(function(x){
+  var li = document.createElement("li");
+  li.innerHTML = "<span></span><b></b>";
+  li.firstChild.textContent = x[0]; li.lastChild.textContent = x[1];
+  list.appendChild(li);
+  var o = document.createElement("option"); o.textContent = x[0]; sel.appendChild(o);
+});
+var d = document.getElementById("d"); d.min = new Date().toISOString().split("T")[0];
+
+document.getElementById("go").onclick = function(){
+  var n = document.getElementById("n").value.trim();
+  var p = document.getElementById("p").value.replace(/[\s.-]/g,"");
+  var err = document.getElementById("err");
+  if(!n){err.textContent="كتب السمية ديالك.";return;}
+  if(!/^(\+?212|0)[5-7]\d{8}$/.test(p)){err.textContent="الرقم ماشي صحيح. مثال: 0612345678";return;}
+  err.textContent="";
+  var msg = "سلام، بغيت نحجز فـ " + SALON + "\nالسمية: " + n + "\nالهاتف: " + p +
+            "\nالخدمة: " + sel.value + (d.value ? "\nالنهار: " + d.value : "");
+  window.open("https://wa.me/" + WA + "?text=" + encodeURIComponent(msg), "_blank");
+};
+</script>
+</body>
+</html>
